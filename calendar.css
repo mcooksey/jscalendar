@@ -1,0 +1,84 @@
+﻿.calendar {
+    width: 350px;
+    background-color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: auto;
+    overflow: auto;
+    border: double;
+}
+
+.monthDiv {
+    width: 350px;
+    height: 25px;
+    padding-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.dayOfWeekDiv {
+    width: 50px;
+    height: 35px;
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 30px;
+}
+
+.dayDiv {
+    width: 48px;
+    height: 28px;
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 28px;
+    border: groove;
+    border-width: 1px;
+}
+
+.currentDay {
+    background-color: #DBB4A7;
+    font-weight: bold;
+}
+
+.weekendDay {
+    color:red;
+    font-style:italic;
+}
+
+.prevButton {
+    margin-left: 20px;
+    float: left;
+}
+
+.nextButton {
+    margin-right: 20px;
+    float: right;
+}
+
+.button {
+    background: #3498db;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
+    font-size: 12px;
+    line-height:15px;
+    text-decoration: none;
+}
+
+    .button:hover {
+        background: #3cb0fd;
+        text-decoration: none;
+    }
+
+.otherMonth {
+    color: lightgray;
+}
+
+.dayDiv:hover {
+    background-color: #B4DBA7;
+    font-weight: bold !important;
+    cursor: pointer;
+}
+
+body {
+    background-color: #A7CEDB;
+}
