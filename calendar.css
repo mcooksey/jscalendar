@@ -7,7 +7,7 @@
     border: double;
 }
 
-.monthDiv {
+.titleDiv {
     width: 350px;
     height: 25px;
     padding-top: 10px;
@@ -41,8 +41,8 @@
 }
 
 .weekendDay {
-    color:red;
-    font-style:italic;
+    color: red;
+    font-style: italic;
 }
 
 .prevButton {
@@ -60,7 +60,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #ffffff;
     font-size: 12px;
-    line-height:15px;
+    line-height: 15px;
     text-decoration: none;
 }
 
@@ -68,6 +68,10 @@
         background: #3cb0fd;
         text-decoration: none;
     }
+
+.controlPanelButton {
+    margin-left:30px;
+}
 
 .otherMonth {
     color: lightgray;
@@ -81,4 +85,42 @@
 
 body {
     background-color: #A7CEDB;
+}
+
+.controlPanel {
+    width: 350px;
+    background-color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: auto;
+    overflow: auto;
+    border: double;
+    float: left;
+    padding-bottom:20px;
+}
+
+.controlPanelHeader {
+    font-size: small;
+    margin-left: 20px;
+    font-style: italic;
+}
+
+.controlPanelText {
+    font-weight: bold;
+    margin-left: 30px;
+    margin-top: -5px;
+    font-size: small;
+}
+
+.checkboxList {
+    margin-top: -5px;
+    font-size: small;
+    list-style-type: none;
+}
+
+.controlPanelDiv {
+    margin-top:20px;
+}
+
+#goToDateButton {
+    margin-right:35px;
 }

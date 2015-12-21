@@ -1,11 +1,13 @@
 ﻿/// <reference path="jquery-2.1.4.min.js" />
 /// <reference path="xdate.js" />
+/// <reference path="controlpanel.js" />
 
 var Calendar = (function () {
     function Calendar(divName) {
         var self = this;
         self.divName = divName;
         self.currentDate = new XDate();
+        
 
         //Draws the month and year of a given XDate object into the div name supplied.
         self.drawDate = function (date, divName) {
@@ -24,7 +26,7 @@ var Calendar = (function () {
             var daysInLastMonth = XDate.getDaysInMonth(lastMonth.getYear(), lastMonth.getMonth());
 
             //Draw in the header + back and forward buttons + days of week
-            $('#' + divName).html('<div id="monthDiv" class="monthDiv">'
+            $('#' + divName).html('<div id="titleDiv" class="titleDiv">'
                 + '<button id="' + divName + 'back" class="prevButton button">Prev</button>'
                 + date.toString("MMMM yyyy")
                 + '<button id="' + divName + 'forward" class="nextButton button">Next</button>'
@@ -105,13 +107,20 @@ var Calendar = (function () {
             self.drawDate(self.displayDate.addMonths(1), self.divName);
         };
 
+        self.jumpToDate = function (date) {
+            self.displayDate = date;
+            self.drawDate(self.displayDate, divName);
+        }
+
         //draw the current date when we initialize
         //Can later take in an XDate as a parameter and set displayDate equal to it, if needed.
         self.displayDate = self.currentDate.clone();
+        self.selectedDate = self.currentDate.clone();
         self.drawDate(self.displayDate, divName);
     }
     return Calendar;
 }());
 
 var calendar1 = new Calendar("calendarDiv");
-var calendar2 = new Calendar("calendar2Div");
+
+var controlPanel1 = new ControlPanel(calendar1, "controlPanel1");
