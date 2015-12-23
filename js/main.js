@@ -7,6 +7,11 @@ var Calendar = (function () {
         var self = this;
         self.divName = divName;
         self.currentDate = new XDate();
+        self.selectedDivNames = new Array();
+        self.disabledDivNames = new Array();
+        self.markedDivNames = new Array();
+        self.disabledTooltip = "This day is disabled.";
+        self.markedTooltip = "This day is marked.";
         
 
         //Draws the month and year of a given XDate object into the div name supplied.
@@ -51,12 +56,19 @@ var Calendar = (function () {
             while (prevMonthCounter < firstDayOfMonth) {
                 var dayToShow = new XDate(date.getFullYear(), date.getMonth() -1, prevMonthDay);
                 if (dayToShow.getDay() === 0 || dayToShow.getDay() === 6) {
-                    $('#' + divName).append('<div id="dayDiv" class="dayDiv otherMonth weekendDay">' + prevMonthDay++ + '</div>');
+                    $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + prevMonthDay + '" class="dayDiv otherMonth weekendDay">' + prevMonthDay + '</div>');
+                    $('#' + 'dayDiv_' + dayToShow.getMonth() + '_' + prevMonthDay).click(function (event) {
+                        self.backMonth();
+                    });
                 }
                 else {
-                    $('#' + divName).append('<div id="dayDiv" class="dayDiv otherMonth">' + prevMonthDay++ + '</div>');
+                    $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + prevMonthDay + '" class="dayDiv otherMonth">' + prevMonthDay + '</div>');
+                    $('#' + 'dayDiv_' + dayToShow.getMonth() + '_' + prevMonthDay).click(function (event) {
+                        self.backMonth();
+                    });
                 }
                 prevMonthCounter++;
+                prevMonthDay++;
             }
             
             //draw in the days for the current month
@@ -66,22 +78,32 @@ var Calendar = (function () {
                     if (i === self.currentDate.getDate() &&
                         date.getMonth() === self.currentDate.getMonth() &&
                         date.getFullYear() === self.currentDate.getFullYear()) {
-                        $('#' + divName).append('<div id="dayDiv" class="dayDiv currentDay weekendDay">' + i + '</div>');
+                        $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + i + '" class="dayDiv currentDay weekendDay">' + i + '</div>');
                     }
                     else {
-                        $('#' + divName).append('<div id="dayDiv" class="dayDiv weekendDay">' + i + '</div>');
+                        $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + i + '" class="dayDiv weekendDay">' + i + '</div>');
+
                     }
                 }
                 else {
                     if (i === self.currentDate.getDate() &&
                         date.getMonth() === self.currentDate.getMonth() &&
                         date.getFullYear() === self.currentDate.getFullYear()) {
-                        $('#' + divName).append('<div id="dayDiv" class="dayDiv currentDay">' + i + '</div>');
+                        $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + i + '" class="dayDiv currentDay">' + i + '</div>');
                     }
                     else {
-                        $('#' + divName).append('<div id="dayDiv" class="dayDiv">' + i + '</div>');
+                        $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + i + '" class="dayDiv">' + i + '</div>');
+                        
                     }
                 }
+                $('#' + 'dayDiv_' + dayToShow.getMonth() + '_' + i).click(function (event) {
+                    if (event.ctrlKey) {
+                        self.addSelected(event.target.id);
+                    }
+                    else {
+                        self.toggleSelected(event.target.id);
+                    }
+                });
             }
 
             //draw in the days for next month
@@ -90,13 +112,18 @@ var Calendar = (function () {
             while (nextMonthCounter < 6) {
                 var dayToShow = new XDate(date.getFullYear(), date.getMonth() + 1, i);
                 if (dayToShow.getDay() === 0 || dayToShow.getDay() === 6) {
-                    $('#' + divName).append('<div id="dayDiv" class="dayDiv otherMonth weekendDay">' + i++ + '</div>');
+                    $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + i + '" class="dayDiv otherMonth weekendDay">' + i + '</div>');
                 }
                 else {
-                    $('#' + divName).append('<div id="dayDiv" class="dayDiv otherMonth">' + i++ + '</div>');
+                    $('#' + divName).append('<div id="dayDiv_' + dayToShow.getMonth() + '_' + i + '" class="dayDiv otherMonth">' + i + '</div>');
                 }
+                $('#' + 'dayDiv_' + dayToShow.getMonth() + '_' + i).click(function (event) {
+                    self.forwardMonth();
+                });
                 nextMonthCounter++;
+                i++;
             }
+            self.redrawHighlights();
         }
 
         self.backMonth = function () {
@@ -112,11 +139,111 @@ var Calendar = (function () {
             self.drawDate(self.displayDate, divName);
         }
 
+        self.redrawHighlights = function () {
+            $('#' + self.divName).children().removeClass("selectedDay");
+            $('#' + self.divName).children().removeClass("disabledDay");
+            $('#' + self.divName).children().removeClass("markedDay");
+            $('#' + self.divName).children().attr('title', null);
+
+            self.selectedDivNames.forEach(function (divName) {
+                $('#' + divName).addClass('selectedDay');
+            });
+            self.markedDivNames.forEach(function (divName) {
+                $('#' + divName).addClass('markedDay');
+                $('#' + divName).attr('title', self.markedTooltip);
+            });
+            self.disabledDivNames.forEach(function (divName) {
+                $('#' + divName).addClass('disabledDay');
+                $('#' + divName).attr('title', self.disabledTooltip);
+                
+            });
+        }
+
+        self.markSelected = function () {
+            self.selectedDivNames.forEach(function (divName) {
+                self.markedDivNames.push(divName);
+                self.redrawHighlights();
+            });
+        }
+
+        self.enableSelected = function () {
+            self.selectedDivNames.forEach(function (divName) {
+                var index = self.disabledDivNames.indexOf(divName);
+                self.disabledDivNames.splice(index, 1);
+                self.redrawHighlights();
+            });
+        }
+
+        self.disableSelected = function () {
+            self.selectedDivNames.forEach(function (divName) {
+                self.disabledDivNames.push(divName);
+                self.redrawHighlights();
+            });
+        }
+
+        self.unmarkSelected = function () {
+            self.selectedDivNames.forEach(function (divName) {
+                var index = self.markedDivNames.indexOf(divName);
+                self.markedDivNames.splice(index, 1);
+                self.redrawHighlights();
+            });
+            
+        }
+
+        self.unmarkAll = function () {
+            self.markedDivNames = [];
+            self.redrawHighlights();
+        }
+
+        self.enableAll = function () {
+            self.disabledDivNames = [];
+            self.redrawHighlights();
+        }
+
+        self.addSelected = function (dayID) {
+            if (!$('#' + dayID).hasClass('disabledDay')) {
+                var index = self.selectedDivNames.indexOf(dayID);
+                if (index === -1) {
+                    self.selectedDivNames.push(dayID);
+                }
+                else {
+                    self.selectedDivNames.splice(index, 1);
+                }
+                self.redrawHighlights();
+
+                //update the control panel
+                var split = dayID.split("_");
+                var day = split[2];
+                self.selectedDate = new XDate(self.displayDate.getFullYear(), self.displayDate.getMonth(), day);
+                self.controlPanel.updateLastSelected(self.selectedDate);
+            }
+        }
+
+        self.toggleSelected = function (dayID) {
+            if (!$('#' + dayID).hasClass('disabledDay')) {
+                if ($('#' + dayID).hasClass('selectedDay') && self.selectedDivNames.length === 1) {
+                    $('#' + dayID).removeClass('selectedDay');
+                }
+                else {
+                    self.selectedDivNames = [];
+                    self.selectedDivNames.push(dayID);
+                    self.redrawHighlights();
+
+                    //update the control panel
+                    var split = dayID.split("_");
+                    var day = split[2];
+                    self.selectedDate = new XDate(self.displayDate.getFullYear(), self.displayDate.getMonth(), day);
+                    self.controlPanel.updateLastSelected(self.selectedDate);
+
+                }
+            }
+        }
+
         //draw the current date when we initialize
         //Can later take in an XDate as a parameter and set displayDate equal to it, if needed.
         self.displayDate = self.currentDate.clone();
         self.selectedDate = self.currentDate.clone();
-        self.drawDate(self.displayDate, divName);
+        self.drawDate(self.displayDate, divName);        
     }
     return Calendar;
 }());
@@ -124,3 +251,4 @@ var Calendar = (function () {
 var calendar1 = new Calendar("calendarDiv");
 
 var controlPanel1 = new ControlPanel(calendar1, "controlPanel1");
+calendar1.controlPanel = controlPanel1;
